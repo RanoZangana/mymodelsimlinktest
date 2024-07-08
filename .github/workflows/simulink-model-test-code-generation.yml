@@ -1,0 +1,33 @@
+name: Simulink Test and Generate C-Code
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up MATLAB
+      uses: matlab-actions/setup-matlab@v1
+    
+    - name: Run Simulink tests
+      uses: matlab-actions/run-command@v1
+      with:
+        command: addpath(genpath('.')); run_simulink_tests
+    
+    - name: Generate C-code
+      uses: matlab-actions/run-command@v1
+      with:
+        command: addpath(genpath('.')); generate_c_code
+    
+    - name: Archive generated C-code
+      uses: actions/upload-artifact@v2
+      with:
+        name: c-code
+        path: generated_c_code/
